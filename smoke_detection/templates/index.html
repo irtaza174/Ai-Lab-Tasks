@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smoke Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔥 AI Smoke Detection System</h1>
+            <p class="subtitle">Real-time smoke detection using deep learning</p>
+            {% if model_loaded %}
+                <div class="status-badge success">✓ Model Loaded</div>
+            {% else %}
+                <div class="status-badge error">✗ Model Not Loaded</div>
+            {% endif %}
+        </header>
+
+        <div class="main-content">
+            <!-- Image Upload Section -->
+            <section class="card">
+                <h2>📷 Upload Image</h2>
+                <p class="description">Upload an image to detect smoke</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <div class="upload-placeholder">
+                        <span class="upload-icon">📁</span>
+                        <p>Click to select image or drag and drop</p>
+                        <p class="file-types">Supported: JPG, PNG, GIF (max 16MB)</p>
+                    </div>
+                    <img id="previewImage" class="preview-image" style="display: none;">
+                </div>
+                
+                <button id="uploadBtn" class="btn btn-primary" disabled>
+                    Detect Smoke
+                </button>
+                
+                <div id="uploadResult" class="result-container" style="display: none;"></div>
+            </section>
+
+            <!-- Live Camera Section -->
+            <section class="card">
+                <h2>📹 Live Camera Feed</h2>
+                <p class="description">Real-time smoke detection from camera</p>
+                
+                <div class="camera-container">
+                    <video id="cameraFeed" autoplay playsinline></video>
+                    <canvas id="cameraCanvas" style="display: none;"></canvas>
+                    <div id="cameraPlaceholder" class="camera-placeholder">
+                        <span class="camera-icon">📹</span>
+                        <p>Camera not started</p>
+                    </div>
+                </div>
+                
+                <div class="camera-controls">
+                    <button id="startCameraBtn" class="btn btn-primary">
+                        Start Camera
+                    </button>
+                    <button id="stopCameraBtn" class="btn btn-secondary" style="display: none;">
+                        Stop Camera
+                    </button>
+                </div>
+                
+                <div id="cameraStatus" class="status-info">
+                    <span>Status: <strong id="cameraStatusText">Stopped</strong></span>
+                    <span>Confidence: <strong id="confidenceText">--</strong></span>
+                </div>
+            </section>
+        </div>
+
+        <!-- Settings Section -->
+        <section class="card settings-card">
+            <h3>⚙️ Settings</h3>
+            <div class="settings-group">
+                <label for="thresholdSlider">
+                    Detection Threshold: <strong id="thresholdValue">0.75</strong>
+                </label>
+                <input type="range" id="thresholdSlider" min="0" max="100" value="75" class="slider">
+                <p class="setting-description">Higher values reduce false positives but may miss some smoke</p>
+            </div>
+        </section>
+
+        <!-- Alert History -->
+        <section class="card">
+            <h3>📋 Alert History</h3>
+            <div id="alertHistory" class="alert-history">
+                <p class="no-alerts">No alerts yet</p>
+            </div>
+            <button id="clearHistoryBtn" class="btn btn-secondary btn-small">Clear History</button>
+        </section>
+    </div>
+
+    <!-- Popup Alert Modal -->
+    <div id="alertModal" class="modal">
+        <div class="modal-content alert-modal">
+            <div class="alert-header">
+                <span class="alert-icon">🚨</span>
+                <h2>SMOKE DETECTED!</h2>
+            </div>
+            <div class="alert-body">
+                <p class="alert-message">Smoke has been detected in the monitored area.</p>
+                <div class="alert-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Time:</span>
+                        <span class="detail-value" id="alertTime">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Confidence:</span>
+                        <span class="detail-value" id="alertConfidence">--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="alert-footer">
+                <button id="closeAlertBtn" class="btn btn-primary">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <footer>
+        <p>AI-Based Smoke Detection System | Built with TensorFlow & Flask</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
